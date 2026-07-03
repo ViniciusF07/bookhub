@@ -316,6 +316,4 @@ Este projeto é de uso acadêmico e está disponível para fins educacionais. Si
 
 ---
 
-**Desenvolvido com ♥ para disciplina de Banco de Dados**
-
-*Mantenha o código simples, mantenha o código elegante.* 📚✨
+**Desenvolvido para disciplina de Banco de Dados**
