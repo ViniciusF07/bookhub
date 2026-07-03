@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <h1 class="fw-bold text-dark m-0">
+            <i class="fa-solid fa-book text-primary me-2"></i>Acervo de Livros
+        </h1>
+        <p class="text-muted m-0">
+            <i class="fa-solid fa-layer-group me-1"></i> 
+            {{ total_livros }} livro(s) encontrado(s)
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('novo_livro') }}" class="btn btn-primary shadow-sm">
+            <i class="fa-solid fa-plus me-2"></i>Novo Livro
+        </a>
+    </div>
+</div>
+
+<!-- Barra de pesquisa (mantida igual) -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('listar_livros') }}" class="row g-2">
+            <div class="col-md-10">
+                <div class="input-group">
+                    <span class="input-group-text bg-white">
+                        <i class="fa-solid fa-search text-muted"></i>
+                    </span>
+                    <input type="text" name="q" class="form-control" 
+                           placeholder="Buscar por título, autor ou gênero..." 
+                           value="{{ termo_busca }}">
+                    {% if termo_busca %}
+                        <a href="{{ url_for('listar_livros') }}" class="btn btn-outline-secondary">
+                            <i class="fa-solid fa-times"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-dark w-100">
+                    <i class="fa-solid fa-magnifying-glass me-2"></i>Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Listagem de livros com contador visual -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">#</th>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Gênero</th>
+                        <th>Ano</th>
+                        <th>ISBN</th>
+                        <th class="text-center pe-4">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for livro in livros %}
+                    <tr>
+                        <!-- CONTADOR VISUAL: Usa loop.index em vez do ID -->
+                        <td class="ps-4 text-muted small">{{ loop.index }}</td>
+                        <td class="fw-semibold text-dark">{{ livro.titulo }}</td>
+                        <td>{{ livro.autor }}</td>
+                        <td>
+                            <!-- Se for string única (modelo atual) -->
+                            <span class="badge bg-light text-dark border">
+                                <i class="fa-solid fa-tag me-1"></i>{{ livro.genero }}
+                            </span>
+                            <!-- Se for modelo N:N, use o código comentado abaixo -->
+                            <!--
+                            {% for genero in livro.generos %}
+                                <span class="badge bg-light text-dark border me-1">
+                                    <i class="fa-solid fa-tag me-1"></i>{{ genero.nome }}
+                                </span>
+                            {% endfor %}
+                            -->
+                        </td>
+                        <td>{{ livro.ano_publicacao }}</td>
+                        <td>
+                            {% if livro.isbn %}
+                                <code class="small">{{ livro.isbn }}</code>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center pe-4">
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ url_for('editar_livro', id=livro.id) }}" 
+                                   class="btn btn-outline-warning" title="Editar">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <button type="button" 
+                                        class="btn btn-outline-danger" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#confirmDeleteModal{{ livro.id }}"
+                                        title="Excluir">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Modal de Confirmação -->
+                            <div class="modal fade" id="confirmDeleteModal{{ livro.id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">
+                                                <i class="fa-solid fa-triangle-exclamation text-danger me-2"></i>
+                                                Confirmar Exclusão
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-start">
+                                            <p class="mb-0">Tem certeza que deseja excluir o livro:</p>
+                                            <p class="fw-bold text-danger mb-0">"{{ livro.titulo }}"</p>
+                                            <small class="text-muted">Esta ação não pode ser desfeita.</small>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                <i class="fa-solid fa-times me-2"></i>Cancelar
+                                            </button>
+                                            <form method="POST" action="{{ url_for('excluir_livro', id=livro.id) }}">
+                                                <button type="submit" class="btn btn-danger">
+                                                    <i class="fa-solid fa-trash me-2"></i>Confirmar Exclusão
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-book-open fa-3x mb-3 d-block text-secondary"></i>
+                            <h5 class="fw-bold">Nenhum livro encontrado</h5>
+                            <p class="mb-0">
+                                {% if termo_busca %}
+                                    Nenhum livro corresponde à sua pesquisa.
+                                {% else %}
+                                    Comece cadastrando seu primeiro livro!
+                                {% endif %}
+                            </p>
+                            {% if termo_busca %}
+                                <a href="{{ url_for('listar_livros') }}" class="btn btn-outline-primary mt-3">
+                                    <i class="fa-solid fa-arrow-left me-2"></i>Limpar pesquisa
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('novo_livro') }}" class="btn btn-primary mt-3">
+                                    <i class="fa-solid fa-plus me-2"></i>Cadastrar livro
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

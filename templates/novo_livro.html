@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center my-4">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="fw-bold mb-4 text-dark">
+                    <i class="fa-solid fa-bookmark text-primary me-2"></i>Novo Livro
+                </h3>
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">
+                                <i class="fa-solid fa-heading text-muted me-1"></i>Título do Livro <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" name="titulo" class="form-control" required 
+                                   placeholder="Ex: O Alquimista" value="{{ titulo or '' }}">
+                            <small class="text-muted">Campo obrigatório</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fa-solid fa-user text-muted me-1"></i>Autor <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" name="autor" class="form-control" required 
+                                   placeholder="Ex: Paulo Coelho" value="{{ autor or '' }}">
+                            <small class="text-muted">Campo obrigatório</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fa-solid fa-tag text-muted me-1"></i>Gênero Literário <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" name="genero" class="form-control" required 
+                                   placeholder="Ex: Romance, Ficção" value="{{ genero or '' }}">
+                            <small class="text-muted">Campo obrigatório</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fa-solid fa-calendar text-muted me-1"></i>Ano de Publicação <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" name="ano_publicacao" class="form-control" required 
+                                   placeholder="Ex: 1988" value="{{ ano_publicacao or '' }}" min="0" max="2026">
+                            <small class="text-muted">Ano válido (0-2026)</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fa-solid fa-barcode text-muted me-1"></i>ISBN (Opcional)
+                            </label>
+                            <input type="text" name="isbn" class="form-control" 
+                                   placeholder="978-X-XX-XXXXXX-X" value="{{ isbn or '' }}">
+                            <small class="text-muted">Deve ser único se informado</small>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-top d-flex gap-2 justify-content-end">
+                        <a href="{{ url_for('listar_livros') }}" class="btn btn-light">
+                            <i class="fa-solid fa-arrow-left me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fa-solid fa-save me-2"></i>Salvar Livro
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
